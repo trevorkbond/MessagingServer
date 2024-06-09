@@ -13,16 +13,47 @@ public class Server {
         int port = 4444;
         try (
                 ServerSocket serverSocket = new ServerSocket(port);
-                Socket clientSocket = serverSocket.accept();
-                PrintWriter out =
-                        new PrintWriter(clientSocket.getOutputStream(), true);
-                BufferedReader in =
-                        new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         ) {
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println("Heard: " + inputLine);
-                out.println(inputLine);
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                System.out.printf("New connection from %s\n" +
+                        "There are now %d threads running in this process\n",
+                        clientSocket.getInetAddress(), Thread.activeCount());
+                ClientHandler handler = new ClientHandler(clientSocket);
+                new Thread(handler).start();
+            }
+        }
+    }
+
+    private static class ClientHandler implements Runnable {
+        private Socket clientSocket = null;
+        public ClientHandler(Socket socket) throws IOException {
+            clientSocket = socket;
+        }
+        @Override
+        public void run() {
+            try (
+                    PrintWriter out =
+                            new PrintWriter(clientSocket.getOutputStream(), true);
+                    BufferedReader in =
+                            new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                    )
+            {
+                String inputLine;
+                while ((inputLine = in.readLine()) != null) {
+                    System.out.println("Heard: " + inputLine);
+                    out.println(inputLine);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (clientSocket != null) {
+                    try {
+                        clientSocket.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
