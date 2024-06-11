@@ -22,4 +22,17 @@ I converted the simple server to a (still simple) echo server. I then learned ab
 
 TODO from today:
 - [ ] Implement ExecutorService and use a cached threadpool so the service doesn't waste resources with creating a new thread every time a new client connects.
-- [ ] Learn more about the Extensible Messaging and Presence Protocol (XMPP) and how I will implement it in this client/server model. Learning about and implementing this will likely take a while, but it looks to be the standard messaging protocol. 
+- [x] Learn more about the Extensible Messaging and Presence Protocol (XMPP) and how I will implement it in this client/server model. Learning about and implementing this will likely take a while, but it looks to be the standard messaging protocol. 
+
+### June 10, 2024
+
+I found several sources to help me learn about XMPP. One of which is RFC 6120, a technical description of the latest XMPP standards. I also researched XML parsing over a TCP connection. Here's what I found:
+
+- Java has a helpful tutorial on a [streaming API for XML](https://docs.oracle.com/javase/tutorial/jaxp/stax/index.html). I plan to reference this heavily and learn about their different implementations.
+- XMPP connections are opened by an initiator (usually a client). The signal that the client is opening an XMPP stream is an opening <stream> tag. The server will then respond with an opening <stream> tag.
+- The terminology for a message sent across an XMPP stream is an XMPP stanza.
+
+TODO from today:
+
+- [ ] Implement the XMLParser class with what I learn from the Java XML streaming tutorial.
+- [ ] Get the server and client speaking XMPP at a basic level by having the client initiate an XMPP stream and having the server respond appropriately. 

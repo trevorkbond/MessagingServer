@@ -1,5 +1,7 @@
 package server;
 
+import shared.XMLParser;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +28,7 @@ public class Server {
     }
 
     private static class ClientHandler implements Runnable {
-        private Socket clientSocket = null;
+        private final Socket clientSocket;
         public ClientHandler(Socket socket) throws IOException {
             clientSocket = socket;
         }
