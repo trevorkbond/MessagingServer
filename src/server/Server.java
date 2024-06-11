@@ -7,6 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Arrays;
 
 public class Server {
 
@@ -40,7 +41,8 @@ public class Server {
                             new DocumentSplittingInputStream(clientSocket.getInputStream());
                     )
             {
-                XMLParser parser = new XMLParser(in);
+                ByteArrayInputStream xmlToProcess = in.readUntilStreamClosed();
+                XMLParser parser = new XMLParser(xmlToProcess);
                 parser.parse();
             } catch (IOException | XMLStreamException e) {
                 e.printStackTrace();

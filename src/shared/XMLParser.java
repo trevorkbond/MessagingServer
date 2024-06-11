@@ -2,26 +2,23 @@ package shared;
 
 
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.InputStream;
 import javax.xml.stream.events.XMLEvent;
+import java.io.ByteArrayInputStream;
 
 public class XMLParser {
-    private XMLInputFactory factory;
-    private XMLStreamReader reader;
+    private final XMLStreamReader reader;
 
-    public XMLParser(InputStream in) throws XMLStreamException {
-        factory = XMLInputFactory.newInstance();
+    public XMLParser(ByteArrayInputStream in) throws XMLStreamException {
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         reader = factory.createXMLStreamReader(in);
     }
 
     public void parse() throws XMLStreamException {
-        printEventType();
-        while (reader.getEventType() != XMLStreamConstants.END_DOCUMENT) {
-            reader.next();
+        while (reader.hasNext()) {
             printEventType();
+            reader.next();
         }
     }
 
@@ -46,4 +43,5 @@ public class XMLParser {
             default -> "UNKNOWN_EVENT_TYPE , " + eventType;
         };
     }
+
 }
