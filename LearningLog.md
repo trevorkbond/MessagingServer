@@ -48,4 +48,13 @@ What I learned:
 
 TODO from today:
 
-- [ ] Figure out the relationship between XMLParser and DocumentSplittingInputStream. Most importantly, figure out how to get XMLParser to parse data received from the stream when the stream signals it to do so upon receipt of an XMPP stanza.
+- [x] Figure out the relationship between XMLParser and DocumentSplittingInputStream. Most importantly, figure out how to get XMLParser to parse data received from the stream when the stream signals it to do so upon receipt of an XMPP stanza.
+
+### June 12, 2024
+
+I expanded on yesterday's work to add additional parsing capabilities and have the XMLParser recognize the types of XMPP stanzas it is receiving.
+
+TODO from today: 
+
+- [ ] Make XMPPStreamer an abstract class with different implementations for the client and server side. Both the client and server will have to process XMPP stanzas, but certain of their behaviors will be different, such as a client initiating an XMPP stream and the server responding appropriately.
+- [ ] Figure out if IO multiplexing is needed and if so what the Java implementation looks like. I think this will be useful for the client side especially because I client could receive a message from the server at any time that they need to read. Non-blocking, edge triggered monitoring for IO (like epoll in C) would be useful in this case.

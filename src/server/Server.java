@@ -35,14 +35,14 @@ public class Server {
         @Override
         public void run() {
             try (
-                    PrintWriter out =
-                            new PrintWriter(clientSocket.getOutputStream(), true);
+                    BufferedOutputStream out =
+                            new BufferedOutputStream(clientSocket.getOutputStream());
                     DocumentSplittingInputStream in =
                             new DocumentSplittingInputStream(clientSocket.getInputStream());
                     )
             {
                 //TODO: Make this process repetitive - XML must be processed in XMPP stanzas while the "document" is being received
-                XMPPStreamer streamer = new XMPPStreamer(in);
+                XMPPStreamer streamer = new XMPPStreamer(in, out, false);
                 streamer.stream();
             } catch (IOException | XMLStreamException e) {
                 e.printStackTrace();
