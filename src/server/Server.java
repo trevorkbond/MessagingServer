@@ -2,12 +2,12 @@ package server;
 
 import shared.DocumentSplittingInputStream;
 import shared.XMLParser;
+import shared.XMPPStreamer;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Server {
 
@@ -41,9 +41,9 @@ public class Server {
                             new DocumentSplittingInputStream(clientSocket.getInputStream());
                     )
             {
-                ByteArrayInputStream xmlToProcess = in.readUntilStreamClosed();
-                XMLParser parser = new XMLParser(xmlToProcess);
-                parser.parse();
+                //TODO: Make this process repetitive - XML must be processed in XMPP stanzas while the "document" is being received
+                XMPPStreamer streamer = new XMPPStreamer(in);
+                streamer.stream();
             } catch (IOException | XMLStreamException e) {
                 e.printStackTrace();
             } finally {

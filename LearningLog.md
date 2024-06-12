@@ -34,5 +34,18 @@ I found several sources to help me learn about XMPP. One of which is RFC 6120, a
 
 TODO from today:
 
-- [ ] Implement the XMLParser class with what I learn from the Java XML streaming tutorial.
-- [ ] Get the server and client speaking XMPP at a basic level by having the client initiate an XMPP stream and having the server respond appropriately. 
+- [x] Implement the XMLParser class with what I learn from the Java XML streaming tutorial.
+- [x] Get the server and client speaking XMPP at a basic level by having the client initiate an XMPP stream and having the server respond appropriately. 
+
+### June 11, 2024
+
+I used the Java XML streaming tutorial found yesterday to learn how I can parse XML. The main issue I encountered (that is not yet fully resolved) is that I need to be processing XMPP stanzas as they come in, not just after the entire XML "document" is sent. I am currently remedying this with an extension of the InputStream class that, as of now, stops reading from the socket when it sees a closing "</stream>" tag, the signal of the end of an XMPP stream. 
+
+What I learned:
+
+- Starting simple is extremely helpful, especially when working with new APIs. I ended up simplifying my target achievement for today significantly.
+- Java's terminology for IO that uses characters and Strings is Reader/Writer. InputStream/OutputStream is used for IO dealing directly with bytes.
+
+TODO from today:
+
+- [ ] Figure out the relationship between XMLParser and DocumentSplittingInputStream. Most importantly, figure out how to get XMLParser to parse data received from the stream when the stream signals it to do so upon receipt of an XMPP stanza.

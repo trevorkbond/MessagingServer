@@ -2,6 +2,7 @@ package shared;
 
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
@@ -18,6 +19,10 @@ public class XMLParser {
     public void parse() throws XMLStreamException {
         while (reader.hasNext()) {
             printEventType();
+            if (reader.getEventType() != XMLStreamConstants.START_DOCUMENT)
+                if (reader.getName().toString().equals("stream")) {
+                    break;
+                }
             reader.next();
         }
     }
