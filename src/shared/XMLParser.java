@@ -16,15 +16,28 @@ public class XMLParser {
         reader = factory.createXMLStreamReader(in);
     }
 
-    public void parse() throws XMLStreamException {
+    public StanzaType parse() throws XMLStreamException {
+        StanzaType receivedStanza = null;
         while (reader.hasNext()) {
             printEventType();
-            if (reader.getEventType() != XMLStreamConstants.START_DOCUMENT)
+            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                 if (reader.getName().toString().equals("stream")) {
-                    break;
+                    return StanzaType.STREAM_OPEN;
+                } else {
+                    receivedStanza = getStanzaType();
                 }
             reader.next();
         }
+        return receivedStanza;
+    }
+
+    private StanzaType getStanzaType() {
+        return switch (reader.getName().toString()) {
+            case "message" -> StanzaType.MESSAGE;
+            case "presence" -> StanzaType.PRESENCE;
+            case "stream" -> StanzaType.STREAM_CLOSE;
+            default -> StanzaType.UNKNOWN;
+        };
     }
 
     private void printEventType() {

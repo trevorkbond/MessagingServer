@@ -20,7 +20,7 @@ public class DocumentSplittingInputStream extends BufferedInputStream {
         byte[] readBuf = new byte[BUF_SIZE];
         int bytesRead = 0;
         int totalBytesRead = 0;
-        while ((bytesRead = read(readBuf, totalBytesRead, BUF_SIZE - totalBytesRead)) != -1) {
+        while ((bytesRead = read(readBuf, totalBytesRead, BUF_SIZE - totalBytesRead)) > 0) {
             totalBytesRead += bytesRead;
             if (closeTagInBuf(readBuf)) {
                 break;

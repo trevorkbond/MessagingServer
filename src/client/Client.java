@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.Arrays;
 
 public class Client {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InterruptedException {
         try (
             Socket socket = new Socket("localhost", 4444);
             BufferedOutputStream out =
@@ -15,16 +15,18 @@ public class Client {
             BufferedReader stdIn =
                     new BufferedReader(new InputStreamReader(System.in));
         ) {
-            byte[] buf = (
-                    """
-                            <?xml version="1.0" encoding="UTF-8"?>
-                            <stream>""").getBytes();
-            out.write(buf);
-            out.flush();
-            String userInput;
-            while ((userInput = stdIn.readLine()) != null) {
-                out.write(userInput.getBytes());
-            }
+            sendMessage(out, "<stream>");
+            sendMessage(out, "<message></message>");
+            sendMessage(out, "<presence></presence>");
+            sendMessage(out, "</stream>");
         }
+    }
+
+    private static void sendMessage(BufferedOutputStream out, String
+            message) throws IOException, InterruptedException {
+        byte[] buf = (message).getBytes();
+        out.write(buf);
+        out.flush();
+        Thread.sleep(3000);
     }
 }
