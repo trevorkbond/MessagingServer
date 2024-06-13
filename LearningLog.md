@@ -58,3 +58,11 @@ TODO from today:
 
 - [ ] Make XMPPStreamer an abstract class with different implementations for the client and server side. Both the client and server will have to process XMPP stanzas, but certain of their behaviors will be different, such as a client initiating an XMPP stream and the server responding appropriately.
 - [ ] Figure out if IO multiplexing is needed and if so what the Java implementation looks like. I think this will be useful for the client side especially because I client could receive a message from the server at any time that they need to read. Non-blocking, edge triggered monitoring for IO (like epoll in C) would be useful in this case.
+
+### June 13, 2024
+
+I split XMPPStreamer into a reader and writer class that both the server and client make use of. I may still make these abstract classes with different functionality for the client and server later on.
+
+TODO from today:
+
+- [ ] Figure out how to maintain an open reading and writing connection on the server side without having to break out of the reading loop. This may require creating two threads per client connection (one for reading, one for writing).
