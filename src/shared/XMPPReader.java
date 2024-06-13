@@ -1,27 +1,24 @@
 package shared;
 
 import javax.xml.stream.XMLStreamException;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class XMPPStreamer {
+public class XMPPReader {
 
     private DocumentSplittingInputStream inputStream;
-    private BufferedOutputStream outputStream;
-    private boolean isClientStreamer;
+    private boolean isClientReader;
 
 
-    public XMPPStreamer(DocumentSplittingInputStream inputStream, BufferedOutputStream outputStream, boolean isClient) {
+    public XMPPReader(DocumentSplittingInputStream inputStream, boolean isClient) {
         this.inputStream = inputStream;
-        this.outputStream = outputStream;
 
         //FIXME consider better way to handle the difference between a client streamer and server streamer, possibly make abstract class
-        isClientStreamer = isClient;
+        isClientReader = isClient;
     }
 
     //TODO: error handle XMLStreamException and IOException
-    public void stream() throws XMLStreamException, IOException {
+    public void read() throws XMLStreamException, IOException {
         while (!inputStream.isStreamClosed()) {
             ByteArrayInputStream xmlToProcess = inputStream.readUntilStanzaReceivedOrStreamClosed();
             XMLParser parser = new XMLParser(xmlToProcess);
@@ -34,18 +31,12 @@ public class XMPPStreamer {
                 return;
             }
             StanzaType receivedStanza = parser.parse();
+
+            //FIXME: this is temporarily here to test if the client can an "open xmpp stream" message from the server and if a server can write back
+            if (receivedStanza == StanzaType.STREAM_OPEN) {
+                return;
+            }
             System.out.println(receivedStanza);
-//            if (receivedStanza == StanzaType.STREAM_OPEN && !isClientStreamer) {
-//                writeBytes("<stream>");
-//            } else {
-//                break;
-//            }
         }
     }
-
-//    private void writeBytes(String message) throws IOException {
-//        byte[] buf = (message).getBytes();
-//        outputStream.write(buf);
-//        outputStream.flush();
-//    }
 }

@@ -1,14 +1,15 @@
 package client;
 
 import shared.DocumentSplittingInputStream;
-import shared.XMPPStreamer;
+import shared.XMPPReader;
+import shared.XMPPWriter;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
 import java.net.Socket;
-import java.util.Arrays;
 
 public class Client {
+    private static volatile boolean isStreamOpen = false;
     public static void main(String[] args) throws IOException, InterruptedException, XMLStreamException {
         try (
             Socket socket = new Socket("localhost", 4444);
@@ -17,20 +18,39 @@ public class Client {
             DocumentSplittingInputStream in =
                     new DocumentSplittingInputStream(socket.getInputStream());
         ) {
-            XMPPStreamer streamer = new XMPPStreamer(in, out, true);
-            sendMessage(out, "<stream>");
-//            streamer.stream();
-            sendMessage(out, "<message></message>");
-            sendMessage(out, "<presence></presence>");
-            sendMessage(out, "</stream>");
+            ClientReader reader = new ClientReader(in);
+            new Thread(reader).start();
+            XMPPWriter writer = new XMPPWriter(out);
+            writer.writeBytes("<stream>");
+            while (!isStreamOpen) {
+                Thread.sleep(1000);
+            }
+            Thread.sleep(2000);
+            writer.writeBytes("<message></message>");
+            Thread.sleep(2000);
+            writer.writeBytes("<presence></presence>");
+            Thread.sleep(2000);
+            writer.writeBytes("</stream>");
         }
     }
 
-    private static void sendMessage(BufferedOutputStream out, String
-            message) throws IOException, InterruptedException {
-        byte[] buf = (message).getBytes();
-        out.write(buf);
-        out.flush();
-        Thread.sleep(4000);
+    private static class ClientReader implements Runnable {
+
+        private DocumentSplittingInputStream inputStream;
+
+        public ClientReader(DocumentSplittingInputStream inputStream) {
+            this.inputStream = inputStream;
+        }
+
+        @Override
+        public void run() {
+            XMPPReader reader = new XMPPReader(inputStream, true);
+            try {
+                reader.read();
+                isStreamOpen = true;
+            } catch (XMLStreamException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

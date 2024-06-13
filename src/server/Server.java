@@ -1,8 +1,8 @@
 package server;
 
 import shared.DocumentSplittingInputStream;
-import shared.XMLParser;
-import shared.XMPPStreamer;
+import shared.XMPPReader;
+import shared.XMPPWriter;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
@@ -10,6 +10,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class Server {
+
+    private static volatile boolean isStreamOpen;
 
     public static void main(String[] args) throws IOException {
         int port = 4444;
@@ -41,9 +43,11 @@ public class Server {
                             new DocumentSplittingInputStream(clientSocket.getInputStream());
                     )
             {
-                //TODO: Make this process repetitive - XML must be processed in XMPP stanzas while the "document" is being received
-                XMPPStreamer streamer = new XMPPStreamer(in, out, false);
-                streamer.stream();
+                XMPPReader reader = new XMPPReader(in, false);
+                reader.read();
+                XMPPWriter writer = new XMPPWriter(out);
+                writer.writeBytes("<stream>");
+                reader.read();
             } catch (IOException | XMLStreamException e) {
                 e.printStackTrace();
             } finally {
